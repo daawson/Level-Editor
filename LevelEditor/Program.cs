@@ -7,6 +7,9 @@ using Otter;
 using System.Configuration;
 namespace LevelEditor
 {
+    /// <summary>
+    /// EDYTOR POZIOMU BY DAAWSON
+    /// </summary>
     class Program
     {
         [STAThread]
@@ -25,6 +28,7 @@ namespace LevelEditor
             game.Start(scene);
         }
 
+        // Funkcja zmieniająca wielkość okna gry wg. szerokości i wysokości.
         public static void RestartWindow(int width, int height)
         {
             Game.Instance.SetWindow(width, height);

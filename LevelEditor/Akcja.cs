@@ -13,6 +13,8 @@ using System.Diagnostics;
 
 namespace LevelEditor
 {    
+    // klasa 'handlująca', zawiera główne opcje
+    // TODO: Usunąć niepotrzebne publiki. Wyczyścić kod.
     class Akcja : Entity
     {
 
@@ -28,6 +30,8 @@ namespace LevelEditor
             return value % 2 == 0;
         }
 
+        // wyciąga fragment 32x32 z tekstury
+        // TODO: Dodać funkcje wyboru szerokości fragmentu np. 64x64 itd.
         public Rectangle GetTexture(int id)
         {
             int usedID = id;
@@ -109,6 +113,7 @@ namespace LevelEditor
             usedScene.Add(OtterMenu.Instance);
         }
 
+        //dodaje krawędzie wokół głównej mapy.
         void SetupEdges()
         {
             edges = new Tilemap("../../Assets/edges_tileset.png", 66 * 32, 32);
@@ -163,6 +168,7 @@ namespace LevelEditor
             AddGraphic(g);
         }
 
+        //zmienia podgląd aktualnie wybranego fragmentu tilesetu.
         void SetupPreviewInfo()
         {
             ub2 = Image.CreateRectangle(110, 180, Color.FromBytes(100, 0, 0, 90));
@@ -190,7 +196,8 @@ namespace LevelEditor
 
             
         }
-
+        
+        //wypełnia wszystkie pola ID0
         void SetupTiles()
         {
 
@@ -225,6 +232,7 @@ namespace LevelEditor
             }
         }
 
+        // CZITERSKIE ZAPISANIE PLIKU
         public static String SaveFile()
         {
             //XmlDocument doc = new XmlDocument();
@@ -275,6 +283,7 @@ namespace LevelEditor
             set.ClearColliders();
         }
 
+        //Wwczytanie poziomy
         public void LoadLevel(String t)
         {
             XmlDocument doc = new XmlDocument();
@@ -286,6 +295,7 @@ namespace LevelEditor
 
             int tilescount = doc.GetElementsByTagName("collision").Count;
             set.ClearColliders();
+            // wczytywanie koliderów
             for (int i = 0; i < tilescount-1 ; i++)
             {
                 var cc = settings.ChildNodes[i];
@@ -303,6 +313,7 @@ namespace LevelEditor
             int count = doc.GetElementsByTagName("tile").Count;
             ClearLevel();
 
+            // wczytywanie tilesetów
             for (int i = 0; i < count; i++)
             {               
 
@@ -354,6 +365,7 @@ namespace LevelEditor
 
         #region UPDATE METHODS
 
+        // przesuwanie kamery
         void CheckPlayerKeys()
         {
             if (Game.Instance.Input.KeyDown(Key.W))
@@ -394,17 +406,19 @@ namespace LevelEditor
             }
             */
 
-        }
-        
+        }        
+
+        // czitersko ustawia okno z fragmentami obok okna z grą.
         void SetOptionsPos()
         {
             Form m = Application.OpenForms[0];
             //m.BringToFront();
             m.Location = new System.Drawing.Point(Game.WindowX-m.Size.Width+20, Game.WindowY);
         }
-        
+
         #endregion
 
+        // aktualizacja GUI // TODO: Skrócić kod
         public override void UpdateLast()
         {
             base.UpdateLast();
@@ -470,13 +484,13 @@ namespace LevelEditor
                 updatePos = false;
             }
         }
+        //główna funkcja ustawiania fragmentów
         public override void Update()
         {
             base.Update();
 
             CheckPlayerKeys();
             //CheckPlaceMode();
-
             SetOptionsPos();
 
 

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 
 namespace LevelEditor
 {
+    // Klasa okna z opcjami //TODO: Poczyścić kod
     class Settings:Form
     {
         #region FIELDS
@@ -117,6 +118,7 @@ namespace LevelEditor
             Akcja.updatePos = true;
         }
 
+        // switch colliderów.
         public void SetCollider(int id)
         {
             cb[id].Checked = true;
@@ -124,6 +126,7 @@ namespace LevelEditor
             //collider[cb[id].ID] = true;
         }
 
+        // używane podczas ClearLevel
         public void ClearColliders()
         {
             for(int i = 0; i < cb.Count(); i++)
@@ -132,14 +135,14 @@ namespace LevelEditor
                 collider[i] = false;
             }
         }
-
+        // zmienia zakładki
         private void Tc_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
         #endregion
 
-        // MAIN PUBLIC
+        // MAIN
         public Settings(Akcja a)
         {
             this.Text = "LevelEditor";
@@ -176,6 +179,7 @@ namespace LevelEditor
         }        
 
         #region TABPAGES
+        // Generuje zakładki okna opcji.
         TabPage InitTab1()
         {
             TabPage tp = new TabPage("Tiles");
