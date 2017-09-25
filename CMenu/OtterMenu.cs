@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Otter;
+using LevelEditor;
 
 namespace CMenu
 {
@@ -19,6 +20,8 @@ namespace CMenu
 
         Vector2 cameraPos;
 
+        public static bool isDragging = false;
+
         enum windowCollider
         {
             TopBar
@@ -26,29 +29,31 @@ namespace CMenu
 
         private OtterMenu()
         {
-            InitWindow(100, 500, Color.White);
+            InitWindow(200, 500, Color.White);
             Layer = -1;
         }
 
         public void InitWindow(int w, int h) {
-            InitWindow(w, h, Color.Cyan);
+            InitWindow(w, h, Color.Red);
         }
 
         public void InitWindow(int w, int h, Color c)
         {
             mainbg = Image.CreateRectangle(w, h, c);
-            topbar = Image.CreateRectangle(w, 20, Color.Black);
+            topbar = Image.CreateRectangle(w, 30, new Color(c.R-10, c.G-10, c.B-10));
 
             AddGraphics(mainbg);
             AddGraphics(topbar);
             SetPosition(0, 0);
         }
 
+        // ustawia pozycję względem kamery
         void FollowCamera()
         {
             SetPosition(cameraPos);
         }
 
+        // kiedy isDragged, podąża za kursorem
         void FollowMouse(Vector2 mPos)
         {
             mainbg.SetPosition(mPos.X - mainbg.HalfWidth, mPos.Y - 10);
@@ -58,20 +63,22 @@ namespace CMenu
             //topbar.SetOrigin(mPos);
         }
 
+        // sprawdza czy pasek okna został kliknięty (drag'n drop)
         void CheckDragDrop()
         {
-            Vector2 mPos = new Vector2(Scene.Instance.Input.MouseScreenX, Scene.Instance.Input.MouseScreenY);
-            bool isDragging = Game.Instance.Input.MouseButtonDown(MouseButton.Left) ? true : false;
+            Vector2 mPos = new Vector2(Scene.Instance.Input.MouseScreenX-cameraPos.X, Scene.Instance.Input.MouseScreenY-cameraPos.Y);
+            isDragging = Game.Instance.Input.MouseButtonDown(MouseButton.Left) ? true : false;
             if (isDragging && isVectorInside(mPos, topbar.X, topbar.Y, topbar.Width, topbar.Height))
             {
-                Console.WriteLine("Drag: {0}", isDragging);
+                //Console.WriteLine("Drag: {0}", isDragging);
                 FollowMouse(mPos);
             }
         }
+
         public override void Update()
         {
             base.Update();
-            CheckDragDrop();
+            //CheckDragDrop();
         }
 
         public override void UpdateLast()

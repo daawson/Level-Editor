@@ -493,38 +493,40 @@ namespace LevelEditor
             //CheckPlaceMode();
             SetOptionsPos();
 
+            if (OtterMenu.isDragging)
+            { 
+                Point snap = new Point((int)Otter.Util.SnapToGrid(usedScene.Input.MouseScreenX, 32) / 32, (int)Otter.Util.SnapToGrid(usedScene.Input.MouseScreenY, 32) / 32);
+                ttpos.String = "X:" + snap.X + "|Y:" + snap.Y;
 
-            Point snap = new Point((int)Otter.Util.SnapToGrid(usedScene.Input.MouseScreenX, 32) / 32, (int)Otter.Util.SnapToGrid(usedScene.Input.MouseScreenY, 32) / 32);
-            ttpos.String = "X:" + snap.X + "|Y:" + snap.Y;
+                float mX = Game.Instance.Input.MouseScreenX;
+                float mY = Game.Instance.Input.MouseScreenY;
 
-            float mX = Game.Instance.Input.MouseScreenX;
-            float mY = Game.Instance.Input.MouseScreenY;
-
-            if (Game.Instance.Input.MouseButtonPressed(MouseButton.Right) || Game.Instance.Input.MouseButtonDown(MouseButton.Right) && Game.Instance.HasFocus)
-            {
-                int snapX = (int)Util.SnapToGrid(mX, 32) / 32;
-                int snapY = (int)Util.SnapToGrid(mY, 32) / 32;
-
-                if (snapX < 0 || snapY < 0 || snapX >= maxGridW || snapY >= maxGridH) { }
-                else
+                if (Game.Instance.Input.MouseButtonPressed(MouseButton.Right) || Game.Instance.Input.MouseButtonDown(MouseButton.Right) && Game.Instance.HasFocus)
                 {
+                    int snapX = (int)Util.SnapToGrid(mX, 32) / 32;
+                    int snapY = (int)Util.SnapToGrid(mY, 32) / 32;
 
-                    tholder[snapX, snapY] = 0;
-                    MAIN_TILEMAP.SetTile(snapX, snapY, 0);
-                    //LAYER1.Clear();
+                    if (snapX < 0 || snapY < 0 || snapX >= maxGridW || snapY >= maxGridH) { }
+                    else
+                    {
 
+                        tholder[snapX, snapY] = 0;
+                        MAIN_TILEMAP.SetTile(snapX, snapY, 0);
+                        //LAYER1.Clear();
+
+                    }
                 }
-            }
-            else if (Game.Instance.Input.MouseButtonPressed(MouseButton.Left) || Game.Instance.Input.MouseButtonDown(MouseButton.Left) && Game.Instance.HasFocus)
-            {
-                int snapX = (int)Util.SnapToGrid(mX, 32) / 32;
-                int snapY = (int)Util.SnapToGrid(mY, 32) / 32;
-
-                if (snapX < 0 || snapY < 0 || snapX >= maxGridW || snapY >= maxGridH) { }
-                else
+                else if (Game.Instance.Input.MouseButtonPressed(MouseButton.Left) || Game.Instance.Input.MouseButtonDown(MouseButton.Left) && Game.Instance.HasFocus)
                 {
-                    tholder[snapX, snapY] = CurrentTile;
-                    MAIN_TILEMAP.SetTile(snapX, snapY, CurrentTile);
+                    int snapX = (int)Util.SnapToGrid(mX, 32) / 32;
+                    int snapY = (int)Util.SnapToGrid(mY, 32) / 32;
+
+                    if (snapX < 0 || snapY < 0 || snapX >= maxGridW || snapY >= maxGridH) { }
+                    else
+                    {
+                        tholder[snapX, snapY] = CurrentTile;
+                        MAIN_TILEMAP.SetTile(snapX, snapY, CurrentTile);
+                    }
                 }
             }
         }

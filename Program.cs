@@ -12,12 +12,14 @@ namespace LevelEditor
     /// </summary>
     class Program
     {
-        [STAThread]
+        public static int screenWidth = 1280;
+        public static int screenHeight = 720;
+        [STAThread]        
         static void Main(string[] args)
         {
             //var settings = ConfigurationManager.AppSettings;
 
-            Game game = new Game("LevelEditor", 1280, 720, 60, false);
+            Game game = new Game("LevelEditor", screenWidth, screenHeight, 60, false);
             //game.SetIcon("../../Assets/icon.png");
             game.WindowResize = false;
             game.ReleaseModeDebugger = false;
@@ -32,6 +34,8 @@ namespace LevelEditor
         public static void RestartWindow(int width, int height)
         {
             Game.Instance.SetWindow(width, height);
+            screenWidth = width;
+            screenHeight = height;
             /*
             var settings = ConfigurationManager.AppSettings;
             settings.Set("windowW", width.ToString());
