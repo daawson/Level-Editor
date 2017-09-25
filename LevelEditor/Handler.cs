@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 namespace LevelEditor
 {
+    // Początek programu, nakazuje wczytać plik tilesetu najlepiej 32x32 (TODO: zmienić to).
     class Handler
     {
         public Scene usedScene;
