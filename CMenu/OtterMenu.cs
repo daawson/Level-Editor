@@ -29,18 +29,20 @@ namespace CMenu
 
         private OtterMenu()
         {
-            InitWindow(200, 500, Color.White);
+            InitWindow(200, 500, Color.Cyan);
             Layer = -1;
         }
 
+        // instacja bez koloru
         public void InitWindow(int w, int h) {
-            InitWindow(w, h, Color.Red);
+            InitWindow(w, h, Color.White);
         }
 
+        // instancja z kolorem
         public void InitWindow(int w, int h, Color c)
         {
             mainbg = Image.CreateRectangle(w, h, c);
-            topbar = Image.CreateRectangle(w, 30, new Color(c.R-10, c.G-10, c.B-10));
+            topbar = Image.CreateRectangle(w, 30, new Color(c.R - 0.4f, c.G - 0.4f, c.B - 0.4f, c.A));
 
             AddGraphics(mainbg);
             AddGraphics(topbar);
