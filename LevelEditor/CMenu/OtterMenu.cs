@@ -7,6 +7,9 @@ using Otter;
 
 namespace CMenu
 {
+    // NOWA KLASA OKNA W SILNKU
+    // Dodaje okienko które można przesuwać
+    // TODO: Naprawić bo sie psuje :(
     class OtterMenu:Entity
     {
         public static OtterMenu Instance = new OtterMenu();
