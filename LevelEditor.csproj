@@ -86,8 +86,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Akcja.cs" />
+    <Compile Include="CMenu\CurrentWindow.cs" />
+    <Compile Include="CMenu\CWindow.cs" />
     <Compile Include="Handler.cs" />
-    <Compile Include="CMenu\OtterMenu.cs" />
+    <Compile Include="CMenu\TileWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs">

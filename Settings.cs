@@ -30,7 +30,7 @@ namespace LevelEditor
         public static Boolean[] collider;
         public static Boolean[] wall;
 
-        TabPage wallPage;
+        //TabPage wallPage;
 
         #endregion
 
@@ -92,6 +92,7 @@ namespace LevelEditor
 
         }
 
+        // switch colliderów
         void checkChange(Object sender, EventArgs e)
         {
             Czek to = (Object)sender as Czek;
@@ -118,7 +119,7 @@ namespace LevelEditor
             Akcja.updatePos = true;
         }
 
-        // switch colliderów.
+        // wczytywanie colliderów dla funkcji wczytania
         public void SetCollider(int id)
         {
             cb[id].Checked = true;
@@ -135,7 +136,7 @@ namespace LevelEditor
                 collider[i] = false;
             }
         }
-        // zmienia zakładki
+
         private void Tc_SelectedIndexChanged(object sender, EventArgs e)
         {
 

@@ -18,6 +18,7 @@ namespace LevelEditor
     class Akcja : Entity
     {
 
+        public static Akcja Instance;
         #region TILESET DATA
 
         public static Image TILESET_PATH;
@@ -72,6 +73,8 @@ namespace LevelEditor
 
         public int mouseCol { get; set; } = 1337;
 
+        public static bool isDragging = false;
+
         public enum Kolider
         {
             mysz, guzik
@@ -84,6 +87,11 @@ namespace LevelEditor
         public Settings set;
 
         public static int currentRes = 1;
+
+       
+        Image currentTile; // INSTANCJA IMAGE AKTYWNEGO FRAGMENTU
+        CWindow tilePreview; // OKNO Z PODGLADEM AKTEWNEGO FRAGMENTU
+        RichText tilePreviewInfo;
         #endregion        
 
         #region METHODS
@@ -95,14 +103,10 @@ namespace LevelEditor
 
             SetupEdges();
 
-            //LAYER0 = new GraphicList();
             MAIN_TILEMAP = new Tilemap(st, 64 * 32, 32);
-            //LAYER1 = new GraphicList();
-            SetupTiles();
-            SetupPreviewInfo();
+            SetupTiles();            
 
-
-            
+            Instance = this;                       
 
             set = new Settings(this);
             set.Show();
@@ -110,7 +114,16 @@ namespace LevelEditor
             updatePreview = true;
             updatePos = true;
 
-            usedScene.Add(OtterMenu.Instance);
+            CWindow test = new CWindow(Akcja.TILESET_PATH.Width+6, Akcja.TILESET_PATH.Height+6, 200, 200, Color.Gray, "Tiles");
+            test.AddGraphicsToWindow(3,3,Akcja.TILESET_PATH);
+            usedScene.Add(test);
+
+            tilePreview = new CWindow(100, 140, 500, 200, Color.Red, "Info");
+            usedScene.Add(tilePreview);
+
+            SetupPreviewInfo();
+            //usedScene.Add(new TileWindow());
+            //usedScene.Add(new CurrentWindow());
         }
 
         //dodaje krawędzie wokół głównej mapy.
@@ -168,33 +181,17 @@ namespace LevelEditor
             AddGraphic(g);
         }
 
-        //zmienia podgląd aktualnie wybranego fragmentu tilesetu.
+        //ustawia podgląd aktualnie wybranego fragmentu tilesetu.
         void SetupPreviewInfo()
         {
-            ub2 = Image.CreateRectangle(110, 180, Color.FromBytes(100, 0, 0, 90));
-            AddGraphic(ub2);
+            //dodaje startowy podgląd
+            currentTile = new Image(TILESET_PATH.Texture);
+            currentTile.ClippingRegion = GetTexture(1);
+            currentTile.AtlasRegion = GetTexture(0);
+            tilePreview.AddGraphicsToWindow(3,3,currentTile);
 
-            underbox = Image.CreateRectangle(100, 170, Color.FromBytes(100, 0, 0, 90));
-            AddGraphic(underbox);
-
-            ttpos = new Text();
-            ttpos.Color = Color.White;
-            ttpos.SetPosition(0, 0);
-            AddGraphic(ttpos);
-
-            tt = new Text();
-            tt.Color = Color.White;
-            tt.SetPosition(0, 0);
-            AddGraphic(tt);
-            
-            preview = new Image(TILESET_PATH.Texture);
-            preview.SetPosition(prevX - 34, prevY);
-            preview.ClippingRegion = GetTexture(1);
-            preview.AtlasRegion = GetTexture(0);
-            AddGraphic(preview);
-
-
-            
+            tilePreviewInfo = new RichText("", 12);
+            tilePreview.AddTextToWindow(3, 96, tilePreviewInfo);         
         }
         
         //wypełnia wszystkie pola ID0
@@ -423,37 +420,19 @@ namespace LevelEditor
         {
             base.UpdateLast();
 
-            Vector2 underboxPos = new Vector2(Scene.Instance.CameraX + Game.Instance.Surface.Width - 100, Scene.Instance.CameraY - 86);
-            Vector2 ub2Pos = new Vector2(Scene.Instance.CameraX + Game.Instance.Surface.Width - 110, Scene.Instance.CameraY - 86);
-            Vector2 previewPos = new Vector2(Scene.Instance.CameraX + Game.Instance.Surface.Width - 82, Scene.Instance.CameraY + 18 - 86);
-            Vector2 ttPos = new Vector2(Scene.Instance.CameraX + Game.Instance.Surface.Width - 90, Scene.Instance.CameraY + 100 - 86);
-            Vector2 ttPos2 = new Vector2(Scene.Instance.CameraX + Game.Instance.Surface.Width - 90, Scene.Instance.CameraY + 140 - 86);
-
-            if (currentRes == 0 || currentRes == 1)
-            {
-                underboxPos = new Vector2(Scene.Instance.CameraX + Game.Instance.Surface.Width - 100, Scene.Instance.CameraY);
-                ub2Pos = new Vector2(Scene.Instance.CameraX + Game.Instance.Surface.Width - 110, Scene.Instance.CameraY);
-                previewPos = new Vector2(Scene.Instance.CameraX + Game.Instance.Surface.Width - 82, Scene.Instance.CameraY + 18);
-                ttPos = new Vector2(Scene.Instance.CameraX + Game.Instance.Surface.Width - 90, Scene.Instance.CameraY + 100);
-                ttPos2 = new Vector2(Scene.Instance.CameraX + Game.Instance.Surface.Width - 90, Scene.Instance.CameraY + 140);
-
-            }
-            else if (currentRes == 2)
-            {
-                underboxPos = new Vector2(Scene.Instance.CameraX + Game.Instance.Surface.Width - 150 - 77, Scene.Instance.CameraY+67);
-                ub2Pos = new Vector2(Scene.Instance.CameraX + Game.Instance.Surface.Width - 160 - 77, Scene.Instance.CameraY + 67);
-                previewPos = new Vector2(Scene.Instance.CameraX + Game.Instance.Surface.Width - 132 - 77, Scene.Instance.CameraY + 18 + 67);
-                ttPos = new Vector2(Scene.Instance.CameraX + Game.Instance.Surface.Width - 140 - 77, Scene.Instance.CameraY + 100 + 67);
-                ttPos2 = new Vector2(Scene.Instance.CameraX + Game.Instance.Surface.Width - 140 - 77, Scene.Instance.CameraY + 140 + 67);
-
-            }
-
             Point snap = new Point((int)Otter.Util.SnapToGrid(usedScene.Input.MouseScreenX, 32) / 32, (int)Otter.Util.SnapToGrid(usedScene.Input.MouseScreenY, 32) / 32);
 
             if (updatePreview)
             {
+                tilePreview.RemoveGraphicsFromWindow(currentTile);
+                currentTile = new Image(TILESET_PATH.Texture);
+                currentTile.AtlasRegion = GetTexture(CurrentTile);
+                currentTile.ClippingRegion = GetTexture(0);
+                currentTile.Scale = 2.0f;
+                tilePreview.AddGraphicsToWindow(18, 9, currentTile);
 
-                underbox.SetPosition(underboxPos);
+
+                /*underbox.SetPosition(underboxPos);
 
                 RemoveGraphics(preview);
                 preview = new Image(TILESET_PATH.Texture);
@@ -466,22 +445,8 @@ namespace LevelEditor
                 preview.Scale = 2f;
                 AddGraphic(preview);
                 updatePreview = false;
+                */
 
-
-            }
-            if (updatePos)
-            {
-                ub2.SetPosition(ub2Pos);
-                underbox.SetPosition(underboxPos);
-
-                preview.SetPosition(previewPos);                
-
-                tt.String = "ID: " + CurrentTile + "\nCC: " + Settings.collider[CurrentTile];
-                ttpos.SetPosition(ttPos2);
-
-                tt.SetPosition(ttPos);
-                //updatePreview = true;
-                updatePos = false;
             }
         }
         //główna funkcja ustawiania fragmentów
@@ -493,15 +458,17 @@ namespace LevelEditor
             //CheckPlaceMode();
             SetOptionsPos();
 
-            if (OtterMenu.isDragging)
+
+
+            if (!isDragging)
             { 
                 Point snap = new Point((int)Otter.Util.SnapToGrid(usedScene.Input.MouseScreenX, 32) / 32, (int)Otter.Util.SnapToGrid(usedScene.Input.MouseScreenY, 32) / 32);
-                ttpos.String = "X:" + snap.X + "|Y:" + snap.Y;
+                tilePreviewInfo.String = "ID: " + CurrentTile + "\nCC: " + Settings.collider[CurrentTile]+ "\nX:" + snap.X + "|Y:" + snap.Y;
 
                 float mX = Game.Instance.Input.MouseScreenX;
                 float mY = Game.Instance.Input.MouseScreenY;
 
-                if (Game.Instance.Input.MouseButtonPressed(MouseButton.Right) || Game.Instance.Input.MouseButtonDown(MouseButton.Right) && Game.Instance.HasFocus)
+                if (Game.Instance.Input.MouseButtonPressed(MouseButton.Right) || Game.Instance.Input.MouseButtonDown(MouseButton.Right) && Game.Instance.HasFocus && !isDragging)
                 {
                     int snapX = (int)Util.SnapToGrid(mX, 32) / 32;
                     int snapY = (int)Util.SnapToGrid(mY, 32) / 32;
@@ -516,7 +483,7 @@ namespace LevelEditor
 
                     }
                 }
-                else if (Game.Instance.Input.MouseButtonPressed(MouseButton.Left) || Game.Instance.Input.MouseButtonDown(MouseButton.Left) && Game.Instance.HasFocus)
+                else if (Game.Instance.Input.MouseButtonPressed(MouseButton.Left) || Game.Instance.Input.MouseButtonDown(MouseButton.Left) && Game.Instance.HasFocus && !isDragging)
                 {
                     int snapX = (int)Util.SnapToGrid(mX, 32) / 32;
                     int snapY = (int)Util.SnapToGrid(mY, 32) / 32;
