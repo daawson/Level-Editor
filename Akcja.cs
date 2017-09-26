@@ -64,16 +64,12 @@ namespace LevelEditor
         public static bool updatePos { get; set; } = true;
         public static bool updatePreview { get; set; } = true;
 
-        public Image preview;
-        public Text tt,ttpos;
-        public Image underbox, ub2;
-
         int prevX;
         int prevY = 0;
 
         public int mouseCol { get; set; } = 1337;
 
-        public static bool isDragging = false;
+        
 
         public enum Kolider
         {
@@ -89,9 +85,13 @@ namespace LevelEditor
         public static int currentRes = 1;
 
        
+        /// ZMIENNE OKIENEK
         Image currentTile; // INSTANCJA IMAGE AKTYWNEGO FRAGMENTU
         CWindow tilePreview; // OKNO Z PODGLADEM AKTEWNEGO FRAGMENTU
         RichText tilePreviewInfo;
+
+        public static bool isDragging = false;
+        public static bool isInsideWindow = false;
         #endregion        
 
         #region METHODS
@@ -109,17 +109,23 @@ namespace LevelEditor
             Instance = this;                       
 
             set = new Settings(this);
-            set.Show();
+            set.Hide();
 
             updatePreview = true;
             updatePos = true;
 
-            CWindow test = new CWindow(Akcja.TILESET_PATH.Width+6, Akcja.TILESET_PATH.Height+6, 200, 200, Color.Gray, "Tiles");
-            test.AddGraphicsToWindow(3,3,Akcja.TILESET_PATH);
-            usedScene.Add(test);
+            CWindow tilesChooser = new CWindow(Akcja.TILESET_PATH.Width+6, Akcja.TILESET_PATH.Height+6, 5,10, Color.Gray, "Tiles");
+            tilesChooser.AddGraphicsToWindow(3,3,Akcja.TILESET_PATH);
+            tilesChooser.AddButtonsForTiles();
+            usedScene.Add(tilesChooser);
 
-            tilePreview = new CWindow(100, 140, 500, 200, Color.Red, "Info");
+            tilePreview = new CWindow(100, 140, Akcja.TILESET_PATH.Width + 6+6, 10, Color.Gray, "Info");
             usedScene.Add(tilePreview);
+
+            CWindow options = new CWindow(184, 54, 5, Akcja.TILESET_PATH.Height + 6+1+45, Color.Red, "Options");
+            options.AddButtonsForOptions();
+            options.AddTextToWindow(4, 40, new RichText("Made by Daawson",10));
+            usedScene.Add(options);
 
             SetupPreviewInfo();
             //usedScene.Add(new TileWindow());
@@ -277,7 +283,7 @@ namespace LevelEditor
                 }
             }
 
-            set.ClearColliders();
+            //set.ClearColliders();
         }
 
         //Wwczytanie poziomy
@@ -291,7 +297,7 @@ namespace LevelEditor
 
 
             int tilescount = doc.GetElementsByTagName("collision").Count;
-            set.ClearColliders();
+            //set.ClearColliders();
             // wczytywanie koliderów
             for (int i = 0; i < tilescount-1 ; i++)
             {
@@ -303,7 +309,7 @@ namespace LevelEditor
                 if (hasCC)
                 {
                     //Console.WriteLine(hasCC + " " + cc.Attributes["cc"].Value);
-                    set.SetCollider(id);
+                    //set.SetCollider(id);
                 }
             }
 
@@ -408,9 +414,9 @@ namespace LevelEditor
         // czitersko ustawia okno z fragmentami obok okna z grą.
         void SetOptionsPos()
         {
-            Form m = Application.OpenForms[0];
+            //Form m = Application.OpenForms[0];
             //m.BringToFront();
-            m.Location = new System.Drawing.Point(Game.WindowX-m.Size.Width+20, Game.WindowY);
+            //m.Location = new System.Drawing.Point(Game.WindowX-m.Size.Width+20, Game.WindowY);
         }
 
         #endregion
@@ -456,11 +462,11 @@ namespace LevelEditor
 
             CheckPlayerKeys();
             //CheckPlaceMode();
-            SetOptionsPos();
+            //SetOptionsPos();
 
 
 
-            if (!isDragging)
+            if (!isDragging && !isInsideWindow)
             { 
                 Point snap = new Point((int)Otter.Util.SnapToGrid(usedScene.Input.MouseScreenX, 32) / 32, (int)Otter.Util.SnapToGrid(usedScene.Input.MouseScreenY, 32) / 32);
                 tilePreviewInfo.String = "ID: " + CurrentTile + "\nCC: " + Settings.collider[CurrentTile]+ "\nX:" + snap.X + "|Y:" + snap.Y;
@@ -468,7 +474,7 @@ namespace LevelEditor
                 float mX = Game.Instance.Input.MouseScreenX;
                 float mY = Game.Instance.Input.MouseScreenY;
 
-                if (Game.Instance.Input.MouseButtonPressed(MouseButton.Right) || Game.Instance.Input.MouseButtonDown(MouseButton.Right) && Game.Instance.HasFocus && !isDragging)
+                if (Game.Instance.Input.MouseButtonPressed(MouseButton.Right) || Game.Instance.Input.MouseButtonDown(MouseButton.Right) && Game.Instance.HasFocus && !isDragging && !isInsideWindow)
                 {
                     int snapX = (int)Util.SnapToGrid(mX, 32) / 32;
                     int snapY = (int)Util.SnapToGrid(mY, 32) / 32;
@@ -483,7 +489,7 @@ namespace LevelEditor
 
                     }
                 }
-                else if (Game.Instance.Input.MouseButtonPressed(MouseButton.Left) || Game.Instance.Input.MouseButtonDown(MouseButton.Left) && Game.Instance.HasFocus && !isDragging)
+                else if (Game.Instance.Input.MouseButtonPressed(MouseButton.Left) || Game.Instance.Input.MouseButtonDown(MouseButton.Left) && Game.Instance.HasFocus && !isDragging && !isInsideWindow)
                 {
                     int snapX = (int)Util.SnapToGrid(mX, 32) / 32;
                     int snapY = (int)Util.SnapToGrid(mY, 32) / 32;

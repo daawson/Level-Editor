@@ -19,13 +19,13 @@ namespace LevelEditor
         TabControl tc = new TabControl();
 
         Czek[] cb;
-        Button[] block;
-        Button save, load, quit, newLevel, help;
+        //Button[] block;
+        //Button save, load, quit, newLevel, help;
 
         ListBox resolutionsBox;
 
-        SaveFileDialog sfd = new SaveFileDialog();        
-        OpenFileDialog ofd = new OpenFileDialog();
+        static SaveFileDialog sfd = new SaveFileDialog();        
+        static OpenFileDialog ofd = new OpenFileDialog();
 
         public static Boolean[] collider;
         public static Boolean[] wall;
@@ -35,7 +35,8 @@ namespace LevelEditor
         #endregion
 
         #region VOID METHODS /EVENTS
-        void saveClick(Object sender, EventArgs e)
+
+        public static void saveClick()
         {
             sfd.Filter = "XML Files | *.xml";
             DialogResult dr = sfd.ShowDialog();
@@ -47,7 +48,7 @@ namespace LevelEditor
             File.WriteAllText(name, Akcja.SaveFile());
         }
 
-        void loadClick(Object sender, EventArgs e)
+        public static void loadClick()
         {
             ofd.Filter = "XML Files | *.xml";
             DialogResult dr = ofd.ShowDialog();
@@ -57,7 +58,7 @@ namespace LevelEditor
                 string file = ofd.FileName;
                 try
                 {
-                    akszyn.LoadLevel(file);
+                    Akcja.Instance.LoadLevel(file);
                 }
                 catch (IOException)
                 {
@@ -66,21 +67,21 @@ namespace LevelEditor
 
         }
 
-        void quitClick(Object sender, EventArgs e)
+        public static void quitClick()
         {
             Akcja.QuitEditor();
         }
 
-        void newClick(Object sender, EventArgs e)
+        public static void newClick()
         {
-            akszyn.ClearLevel();
+            Akcja.Instance.ClearLevel();
         }
 
-        void helpClick(Object sender, EventArgs e)
+        public static void helpClick()
         {
-            string message = "Use tabs in settings window, to chose what you want to do!";
+            string message = "All the functions are shown in movable inEditor windows!!";
             message += "\nTiles: Chose a tile to draw on the map. LMB to place. RMB to remove.";
-            message += "\nCollision: Lets you chose which tile has a collider. Red = collision / Black = no collision.";
+            message += "\nInfo: Shows the currently choosen tile, also displays current mouse position according to grid";
             message += "\nOptions: Basic options for your level. Save/Load/Create New/Quit";
             string caption = "Help?";
             MessageBoxButtons buttons = MessageBoxButtons.OK;
@@ -91,34 +92,7 @@ namespace LevelEditor
             result = MessageBox.Show(message, caption, buttons);
 
         }
-
-        // switch colliderów
-        void checkChange(Object sender, EventArgs e)
-        {
-            Czek to = (Object)sender as Czek;
-
-            if (collider[to.ID])
-            {
-                collider[to.ID] = false;
-                to.ForeColor = System.Drawing.Color.Black;
-            }
-            else
-            {
-                collider[to.ID] = true;
-                to.ForeColor = System.Drawing.Color.Red;
-            }
-
-            //Console.WriteLine(collider[to.ID] + " ID: " + to.ID);
-        }
-
-        void changeCurrent(Object sender, EventArgs e)
-        {
-            Button b = (Object)sender as Button;
-            Akcja.CurrentTile = Int32.Parse(b.Text);
-            Akcja.updatePreview = true;
-            Akcja.updatePos = true;
-        }
-
+        
         // wczytywanie colliderów dla funkcji wczytania
         public void SetCollider(int id)
         {
@@ -150,7 +124,7 @@ namespace LevelEditor
             this.Focus();
             akszyn = a;
             sfd.FileOk += new CancelEventHandler(sfd_FileOk);
-            this.FormClosing += new FormClosingEventHandler(quitClick);
+            //this.FormClosing += new FormClosingEventHandler(quitClick);
             this.ControlBox = false;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -169,16 +143,17 @@ namespace LevelEditor
             tc.ClientSize = new System.Drawing.Size(this.Width, this.Height);
 
             Controls.Add(tc);
-            tc.Controls.Add(InitTab1());
-            tc.Controls.Add(InitTab2());
+            //tc.Controls.Add(InitTab1());
+            //tc.Controls.Add(InitTab2());
             //wallPage = InitTab3();
             //tc.Controls.Add(wallPage);
-            tc.Controls.Add(InitTab4());
+            //tc.Controls.Add(InitTab4());
             tc.SelectedIndexChanged += Tc_SelectedIndexChanged;
 
       
         }        
 
+        /*
         #region TABPAGES
         // Generuje zakładki okna opcji.
         TabPage InitTab1()
@@ -326,7 +301,7 @@ namespace LevelEditor
 
             return tp;
         }
-
+        /*
         TabPage InitTab4()
         {
             TabPage tp = new TabPage("Options");
@@ -436,6 +411,8 @@ namespace LevelEditor
             Akcja.updatePreview = true;
         }
         #endregion
+
+        */
     }
     class Czek : CheckBox
     {
