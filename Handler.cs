@@ -9,6 +9,7 @@ using System.Windows.Forms;
 namespace LevelEditor
 {
     // Początek programu, nakazuje wczytać plik tilesetu najlepiej 32x32 (TODO: zmienić to).
+    //TODO: W skrócie opisać klase
     class Handler
     {
         public Scene usedScene;
@@ -16,7 +17,7 @@ namespace LevelEditor
         public Handler(Scene s)
         {
             openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.Title = "Wybierz plik tilesetu: ";
+            openFileDialog1.Title = "Choose the tileset file: ";
             openFileDialog1.Filter = "PNG Files | *.png";
             DialogResult result = openFileDialog1.ShowDialog(); // Show the dialog.
             if (result == DialogResult.OK) // Test result.

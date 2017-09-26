@@ -17,14 +17,13 @@ namespace LevelEditor
     // TODO: Usunąć niepotrzebne publiki. Wyczyścić kod.
     class Akcja : Entity
     {
-
+        // pozwala na randomowe korzystanie z funkcji bez tworzenia niepotrzebnych innych instancji klasy
         public static Akcja Instance;
+
         #region TILESET DATA
 
         public static Image TILESET_PATH;
         public static string TILESET_STRING;
-        //string LEVELDATA = "../../Assets/LevelData.xml";
-
             
         public static bool IsEven(int value)
         {
@@ -45,31 +44,25 @@ namespace LevelEditor
 
         #region FIELDS        
 
+        //TODO OGARNĄC NIEPOTRZEBNE ZMIENNE
         public static Scene usedScene;
 
         public static int maxGridW = 64;
         public static int maxGridH = 64;
-
-        //int tileSize = 32;
 
         public static int CurrentTile { get; set; } = 0;
 
         public static int[,] tholder;
 
         Tilemap edges;
-
-        //GraphicList LAYER0;
         Tilemap MAIN_TILEMAP;
 
         public static bool updatePos { get; set; } = true;
         public static bool updatePreview { get; set; } = true;
 
         int prevX;
-        int prevY = 0;
 
         public int mouseCol { get; set; } = 1337;
-
-        
 
         public enum Kolider
         {
@@ -95,6 +88,7 @@ namespace LevelEditor
         #endregion        
 
         #region METHODS
+        // main public m8
         public Akcja(Scene s, string st, Image img)
         {
             usedScene = s;
@@ -104,35 +98,39 @@ namespace LevelEditor
             SetupEdges();
 
             MAIN_TILEMAP = new Tilemap(st, 64 * 32, 32);
-            SetupTiles();            
+            SetupTiles();
 
             Instance = this;                       
 
+            //TODO: edytować nazwy klas i ogarnąć kod \//\//\/\/\ w klasie Settings
             set = new Settings(this);
-            set.Hide();
 
+            //forcuje odswierzenie podgladu
             updatePreview = true;
             updatePos = true;
 
+            // dodaje okno wyboru fragmentów 
             CWindow tilesChooser = new CWindow(Akcja.TILESET_PATH.Width+6, Akcja.TILESET_PATH.Height+6, 5,10, Color.Gray, "Tiles");
-            tilesChooser.AddGraphicsToWindow(3,3,Akcja.TILESET_PATH);
-            tilesChooser.AddButtonsForTiles();
+            tilesChooser.AddGraphicsToWindow(3,3,Akcja.TILESET_PATH); // funcja dodająca grafike
+            tilesChooser.AddButtonsForTiles(); // TODO: Połączyć tą i funkcje wyzej, tak jak jest to w CWindow-options.
             usedScene.Add(tilesChooser);
 
+            // okienko z informacjami fragmentu/podgląd
             tilePreview = new CWindow(100, 140, Akcja.TILESET_PATH.Width + 6+6, 10, Color.Gray, "Info");
             usedScene.Add(tilePreview);
 
+            // ...
+            SetupPreviewInfo();
+
+            // okno opcji, zapis/wczytaj/pomoc/quit/clear
             CWindow options = new CWindow(184, 54, 5, Akcja.TILESET_PATH.Height + 6+1+45, Color.Red, "Options");
             options.AddButtonsForOptions();
-            options.AddTextToWindow(4, 40, new RichText("Made by Daawson",10));
+            options.AddTextToWindow(4, 40, new RichText("Made by Daawson",10));//witam
             usedScene.Add(options);
 
-            SetupPreviewInfo();
-            //usedScene.Add(new TileWindow());
-            //usedScene.Add(new CurrentWindow());
         }
 
-        //dodaje krawędzie wokół głównej mapy.
+        //dodaje krawędzie wokół mapy edytora
         void SetupEdges()
         {
             edges = new Tilemap("../../Assets/edges_tileset.png", 66 * 32, 32);
@@ -187,7 +185,7 @@ namespace LevelEditor
             AddGraphic(g);
         }
 
-        //ustawia podgląd aktualnie wybranego fragmentu tilesetu.
+        //funkcja startowa podglądu aktualnie wybranego fragmentu tilesetu.
         void SetupPreviewInfo()
         {
             //dodaje startowy podgląd
@@ -200,7 +198,8 @@ namespace LevelEditor
             tilePreview.AddTextToWindow(3, 96, tilePreviewInfo);         
         }
         
-        //wypełnia wszystkie pola ID0
+        //GŁÓWNY FUNKCJA USTAWIAJĄCA TILEMAP DO UŻYTKU
+        //generuje mape pół ustawiając przy okazji wszystkie pola na ID0
         void SetupTiles()
         {
 
@@ -271,6 +270,7 @@ namespace LevelEditor
 
         }
 
+        //zeruje wszystkie pola tj. ustawia id na 0.
         public void ClearLevel()
         {
             for(int x =0; x < maxGridW; x++)
@@ -286,7 +286,7 @@ namespace LevelEditor
             //set.ClearColliders();
         }
 
-        //Wwczytanie poziomy
+        //Wczytanie poziomy
         public void LoadLevel(String t)
         {
             XmlDocument doc = new XmlDocument();
@@ -359,6 +359,7 @@ namespace LevelEditor
             */
         }        
 
+        // forseqłit do pulpitu
         public static void QuitEditor()
         {
             Game.Instance.Close();
@@ -366,9 +367,9 @@ namespace LevelEditor
 
         #endregion
 
-        #region UPDATE METHODS
+        #region ANODER MITODS
 
-        // przesuwanie kamery
+        // przesuwanie kamery WSAD'em
         void CheckPlayerKeys()
         {
             if (Game.Instance.Input.KeyDown(Key.W))
@@ -392,26 +393,9 @@ namespace LevelEditor
                 usedScene.CameraX += 10;
                 updatePos = true;
             }
-
-            /*
-            if (Game.Instance.Input.KeyPressed(Key.P))
-            {
-                if (playerPlace)
-                {
-                    playerPlace = false;
-                    CurrentTile = 0;
-                }
-                else
-                {
-                    playerPlace = true;
-                    CurrentTile = 69;
-                }
-            }
-            */
-
         }        
 
-        // czitersko ustawia okno z fragmentami obok okna z grą.
+        // czitersko ustawia okno z fragmentami obok okna z grą. //nieużywane od przeniesienia opcji do głównego okna.
         void SetOptionsPos()
         {
             //Form m = Application.OpenForms[0];
@@ -425,9 +409,10 @@ namespace LevelEditor
         public override void UpdateLast()
         {
             base.UpdateLast();
-
+            //snapujemy do gridu 32x32
             Point snap = new Point((int)Otter.Util.SnapToGrid(usedScene.Input.MouseScreenX, 32) / 32, (int)Otter.Util.SnapToGrid(usedScene.Input.MouseScreenY, 32) / 32);
 
+            // zmiana obrazka podglądu aktualnego fragmentu tilesetu
             if (updatePreview)
             {
                 tilePreview.RemoveGraphicsFromWindow(currentTile);
@@ -437,43 +422,30 @@ namespace LevelEditor
                 currentTile.Scale = 2.0f;
                 tilePreview.AddGraphicsToWindow(18, 9, currentTile);
 
-
-                /*underbox.SetPosition(underboxPos);
-
-                RemoveGraphics(preview);
-                preview = new Image(TILESET_PATH.Texture);
-                preview.AtlasRegion = GetTexture(CurrentTile);
-                preview.ClippingRegion = GetTexture(0);
-                preview.SetPosition(previewPos);
-                tt.String = "ID: " + CurrentTile + "\nCC: " + Settings.collider[CurrentTile];
-                tt.SetPosition(ttPos);
-                ttpos.SetPosition(ttPos2);
-                preview.Scale = 2f;
-                AddGraphic(preview);
-                updatePreview = false;
-                */
-
             }
         }
-        //główna funkcja ustawiania fragmentów
+
+        //główna funkcja rysowania z tilesetu oraz inne zadania wykonywanye co update.
         public override void Update()
         {
             base.Update();
 
             CheckPlayerKeys();
-            //CheckPlaceMode();
-            //SetOptionsPos();
 
+            //snap to grid 32/32
+            Point snap = new Point((int)Otter.Util.SnapToGrid(usedScene.Input.MouseScreenX, 32) / 32, (int)Otter.Util.SnapToGrid(usedScene.Input.MouseScreenY, 32) / 32);
 
+            //aktualizuje tekst z okienka podglądu
+            tilePreviewInfo.String = "ID: " + CurrentTile + "\nCC: " + Settings.collider[CurrentTile] + "\nX:" + snap.X + "|Y:" + snap.Y;
 
-            if (!isDragging && !isInsideWindow)
-            { 
-                Point snap = new Point((int)Otter.Util.SnapToGrid(usedScene.Input.MouseScreenX, 32) / 32, (int)Otter.Util.SnapToGrid(usedScene.Input.MouseScreenY, 32) / 32);
-                tilePreviewInfo.String = "ID: " + CurrentTile + "\nCC: " + Settings.collider[CurrentTile]+ "\nX:" + snap.X + "|Y:" + snap.Y;
+            if (!isDragging && !isInsideWindow) //jeśli nie przesuwa okna lub jeśli kursor nie jest w oknie z jakimikolwiek guzikami
+            {      
 
+                //TODO: Przerobić na vectory, zoptymalizować :_: bo tragedia
                 float mX = Game.Instance.Input.MouseScreenX;
                 float mY = Game.Instance.Input.MouseScreenY;
 
+                //usuwanie z mapy
                 if (Game.Instance.Input.MouseButtonPressed(MouseButton.Right) || Game.Instance.Input.MouseButtonDown(MouseButton.Right) && Game.Instance.HasFocus && !isDragging && !isInsideWindow)
                 {
                     int snapX = (int)Util.SnapToGrid(mX, 32) / 32;
@@ -482,13 +454,11 @@ namespace LevelEditor
                     if (snapX < 0 || snapY < 0 || snapX >= maxGridW || snapY >= maxGridH) { }
                     else
                     {
-
                         tholder[snapX, snapY] = 0;
                         MAIN_TILEMAP.SetTile(snapX, snapY, 0);
-                        //LAYER1.Clear();
-
                     }
                 }
+                //rysowanie fragmentu
                 else if (Game.Instance.Input.MouseButtonPressed(MouseButton.Left) || Game.Instance.Input.MouseButtonDown(MouseButton.Left) && Game.Instance.HasFocus && !isDragging && !isInsideWindow)
                 {
                     int snapX = (int)Util.SnapToGrid(mX, 32) / 32;

@@ -14,23 +14,26 @@ namespace LevelEditor
     {
         public static int screenWidth = 1280;
         public static int screenHeight = 720;
+
+        //bez tego nie odpalą się dialogi otwierania/zapisywania plików :( //TODO zrobić resercz co to je kurdebele
         [STAThread]        
         static void Main(string[] args)
         {
-            //var settings = ConfigurationManager.AppSettings;
-
-            Game game = new Game("LevelEditor", screenWidth, screenHeight, 60, false);
-            //game.SetIcon("../../Assets/icon.png");
+            //samotłumaczące się komendy i nazwy.
+            Game game = new Game("Level Editor by Daawson", screenWidth, screenHeight, 60, false);
+            game.SetIcon("../../Assets/icon.png");
             game.WindowResize = false;
             game.ReleaseModeDebugger = false;
 
             game.MouseVisible = true;
             Scene scene = new Scene();
+
+            // Startowe okno otwierania pliku tilesetu (PNG)
             new Handler(scene);
             game.Start(scene);
         }
 
-        // Funkcja zmieniająca wielkość okna gry wg. szerokości i wysokości.
+        // Funkcja zmieniająca wielkość okna gry wg. szerokości i wysokości. //nieaktualne cuz wszystkie funkcjie są w oknie głównym
         public static void RestartWindow(int width, int height)
         {
             Game.Instance.SetWindow(width, height);

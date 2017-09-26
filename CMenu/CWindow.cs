@@ -8,8 +8,7 @@ using LevelEditor;
 
 namespace CMenu
 {
-    // klasa customowego okna w grze, można tworzyć instancje!
-
+    // klasa customowego okna w grze, można tworzyć instancje!    
     struct CButton
     {
         public int x, y, w, h, id;
@@ -28,7 +27,8 @@ namespace CMenu
         }
     }
 
-    class CWindow:Entity
+    // TODO: Skomentować bardziej klase, ogarnąć niepotrzebny kod, rozdzielić ten syf na moduły XD
+    class CWindow :Entity
     {
         #region FIELDS
 
@@ -299,6 +299,7 @@ namespace CMenu
         #endregion
 
         #region UPDATES
+
         public override void Update()
         {
             base.Update();            
@@ -314,6 +315,7 @@ namespace CMenu
             FollowCamera();
             //CheckDragDrop();
         }
+
         #endregion
 
         public bool isVectorInside(Vector2 pos, float x, float y, float w, float h)
